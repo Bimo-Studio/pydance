@@ -16,10 +16,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class TestLocaleFormatString(unittest.TestCase):
-    """gradescreen.StatSprite used locale.format (removed in Python 3)."""
+    """gradescreen.StatSprite uses locale.format_string (not the old locale.format API)."""
 
-    def test_locale_format_removed(self):
-        self.assertFalse(hasattr(locale, "format"))
+    def test_format_string_is_the_supported_api(self):
+        # Python 3.10+ may still expose locale.format as a deprecated alias; do not assert it is gone.
+        self.assertTrue(callable(getattr(locale, "format_string", None)))
 
     def test_format_string_integer_grouping(self):
         self.assertEqual(locale.format_string("%d", 42, False), "42")
