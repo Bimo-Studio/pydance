@@ -1,18 +1,75 @@
 MANPAGES += docs/man
 UTILS += utils/findbpm.py
-ZIPMODS += config.py announcer.py fontfx.py menus.py menudriver.py gfxtheme.py songselect.py fileparsers.py colors.py player.py endless.py gradescreen.py lyrics.py steps.py util.py error.py options.py games.py judge.py dance.py stepfilters.py gameselect.py lifebars.py scores.py combos.py listener.py grades.py stats.py arrows.py pad.py ui.py courses.py records.py interface.py courseselect.py fonttheme.py i18n.py
+ZIPMODS += config.py log_config.py sdl_env.py announcer.py fontfx.py menus.py menudriver.py gfxtheme.py songselect.py fileparsers.py colors.py player.py endless.py gradescreen.py lyrics.py steps.py util.py error.py options.py games.py judge.py dance.py dance2.py stepfilters.py gameselect.py lifebars.py scores.py combos.py listener.py grades.py stats.py arrows.py pad.py ui.py courses.py records.py interface.py courseselect.py fonttheme.py i18n.py
 ALLMODS += $(ZIPMODS) constants.py
 
-DATA += themes images sound CREDITS
+DATA += themes images sound CREDITS mo
+
+PYTHON ?= python3
+# Prefer project venv when present (pytest, pygame, pyflakes).
+PYRUN := $(shell test -x ./.venv/bin/python && echo ./.venv/bin/python || echo $(PYTHON))
+
+# Run unit tests with coverage (headless pygame). Requires: pip install -e ".[dev]"
+test:
+	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYRUN) -m pytest tests/ -q --cov --cov-config=pyproject.toml
+
+# Tests + lint (same as CI job locally)
+ci: test lint ruff mypy pycodestyle pylama bandit
+
+# Ruff (lint + import sort + pyupgrade subset; format check)
+ruff:
+	$(PYRUN) -m ruff check .
+	$(PYRUN) -m ruff format --check .
+
+# Static typing (requires: pip install -e ".[dev]")
+mypy:
+	$(PYRUN) -m mypy .
+
+# PEP 8 style (subset; ignores align with [tool.pycodestyle] in pyproject.toml)
+pycodestyle:
+	$(PYRUN) -m pycodestyle .
+
+# Meta-linter (pycodestyle + pyflakes; see [pylama] in setup.cfg).
+# Pylama still imports pkg_resources via setuptools; suppress that deprecation UserWarning on startup.
+pylama:
+	PYTHONWARNINGS=ignore $(PYRUN) -m pylama .
+
+# Security patterns (see [tool.bandit] in pyproject.toml)
+bandit:
+	$(PYRUN) -m bandit -c pyproject.toml -r . -q
+
+# Static analysis: fail only on unused imports / dead assignments (not import * noise).
+# Full `pyflakes` on this tree still reports many star-import warnings; run it by hand if needed.
+lint:
+	@if $(PYRUN) -m pyflakes $$(find . -name '*.py' -not -path './.venv/*' -not -path './backup_fixes/*') 2>&1 \
+		| grep -E "imported but unused|local variable .* assigned to but never used|f-string is missing placeholders" \
+		| grep -v "star imports" \
+		| grep -v "unable to detect undefined names" \
+		| grep -v "may be undefined" \
+		| grep -q .; \
+	then echo "pyflakes: fix unused imports/locals above"; exit 1; \
+	else echo "pyflakes: OK (no unused-import issues)"; fi
 
 clean:
 	rm -f *.pyc pydance.zip
+	@$(MAKE) clean-pyc
+
+# Remove bytecode caches for project code only (does not touch .venv).
+clean-pyc:
+	find . \( -path './.venv' -o -path './.git' \) -prune -o -type f -name '*.pyc' -delete
+	find . \( -path './.venv' -o -path './.git' \) -prune -o -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null; true
 
 distclean: clean
 	rm -f pydance.cfg Makefile po/pydance.pot
 
 pydance.zip:
 	zip pydance.zip $(ZIPMODS)
+
+# Compile po/*.po to mo/<lang>/LC_MESSAGES/pydance.mo (requires gettext msgfmt).
+mo:
+	@mkdir -p mo/ca/LC_MESSAGES mo/sk/LC_MESSAGES
+	msgfmt -o mo/ca/LC_MESSAGES/pydance.mo po/ca.po
+	msgfmt -o mo/sk/LC_MESSAGES/pydance.mo po/sk.po
 
 uptrans:
 	xgettext *.py -o po/pydance.pot
