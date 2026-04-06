@@ -130,8 +130,8 @@ def log_draw(
     _draw_last_sec = sec
     extra = ""
     if first_scroll_rect is not None:
-        l, t, w, h = first_scroll_rect
-        extra = f" sample_scrolling_arrow_rect=({l},{t},{w}x{h})"
+        left, top, w, h = first_scroll_rect
+        extra = f" sample_scrolling_arrow_rect=({left},{top},{w}x{h})"
     logger.info(
         "draw ~t=%ds scrolling_step_arrows=%d static_receptor_row=%d fx=%d hud=%d%s",
         sec,

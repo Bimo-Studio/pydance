@@ -325,7 +325,7 @@ class Pad:
         for d, k, p, e in to_remove:
             del self.events[(d, k)]
         # states are keyed by (pid, event); drop if nothing maps to that pair anymore
-        for _, _, p, e in to_remove:
+        for _d, _k, p, e in to_remove:
             pe = (p, e)
             if pe in self.states and pe not in self.events.values():
                 del self.states[pe]
