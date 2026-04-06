@@ -41,13 +41,12 @@ bandit:
 # Static analysis: fail only on unused imports / dead assignments (not import * noise).
 # Full `pyflakes` on this tree still reports many star-import warnings; run it by hand if needed.
 lint:
-	@if $(PYRUN) -m pyflakes $$(find . -name '*.py' -not -path './.venv/*' -not -path './backup_fixes/*') 2>&1 \
+	@out=$$($(PYRUN) -m pyflakes $$(find . -name '*.py' -not -path './.venv/*' -not -path './backup_fixes/*') 2>&1 \
 		| grep -E "imported but unused|local variable .* assigned to but never used|f-string is missing placeholders" \
 		| grep -v "star imports" \
 		| grep -v "unable to detect undefined names" \
-		| grep -v "may be undefined" \
-		| grep -q .; \
-	then echo "pyflakes: fix unused imports/locals above"; exit 1; \
+		| grep -v "may be undefined" || true); \
+	if [ -n "$$out" ]; then echo "$$out"; echo "pyflakes: fix unused imports/locals above"; exit 1; \
 	else echo "pyflakes: OK (no unused-import issues)"; fi
 
 clean:
