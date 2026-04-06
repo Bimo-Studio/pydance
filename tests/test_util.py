@@ -44,9 +44,7 @@ class TestUtil(unittest.TestCase):
             self.assertEqual(len(hits), 2)
 
     def test_find_skips_missing_directory_with_warning(self):
-        bad = os.path.join(
-            tempfile.gettempdir(), "pydance_nonexistent_" + uuid.uuid4().hex
-        )
+        bad = os.path.join(tempfile.gettempdir(), "pydance_nonexistent_" + uuid.uuid4().hex)
         with self.assertLogs("util", level="WARNING") as cm:
             hits = util.find(bad, ["*.dance"], 0)
         self.assertEqual(hits, [])
