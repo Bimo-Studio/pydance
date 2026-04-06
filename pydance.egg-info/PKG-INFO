@@ -4,6 +4,7 @@ Version: 1.1.0
 Requires-Python: >=3.10
 License-File: LICENSE
 Requires-Dist: pygame>=2
+Requires-Dist: setuptools<81,>=69
 Provides-Extra: dev
 Requires-Dist: pytest>=7; extra == "dev"
 Requires-Dist: pytest-cov>=4; extra == "dev"
@@ -15,7 +16,6 @@ Requires-Dist: mypy>=1.8; extra == "dev"
 Requires-Dist: types-setuptools; extra == "dev"
 Requires-Dist: pycodestyle>=2.12; extra == "dev"
 Requires-Dist: pylama>=8.4; extra == "dev"
-Requires-Dist: setuptools<81,>=69; extra == "dev"
 Requires-Dist: bandit[toml]>=1.7; extra == "dev"
 Dynamic: license-file
 

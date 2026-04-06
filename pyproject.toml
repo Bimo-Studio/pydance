@@ -79,7 +79,6 @@ omit = [
     "announcer.py",
     "dance_minimal.py",
     "run_dance.py",
-    "setup.py",
     "configure_install.py",
     # Pygame rendering / sprite layers (covered by playtesting)
     "arrows.py",
