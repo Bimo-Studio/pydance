@@ -3,10 +3,6 @@ Regression tests for Python 3 migration fixes (not every change has a test here;
 see also test_pydance_songlist, test_sort_regression, test_gfxtheme).
 """
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 import locale
 import os
 import sys
