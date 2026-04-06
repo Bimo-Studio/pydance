@@ -329,15 +329,14 @@ if (
         "Terminal.app or iTerm outside the editor (or set PYDANCE_ALLOW_WINDOW=1 there)."
     )
 
-if (
-    "pytest" not in sys.modules
-    and os.environ.get("CI", "").lower() not in ("1", "true", "yes")
-):
+if "pytest" not in sys.modules and os.environ.get("CI", "").lower() not in ("1", "true", "yes"):
     logger.info(
         "SDL headless=%s SDL_VIDEODRIVER=%r (arrow keys: %s)",
         sdl_env.headless_sdl,
         os.environ.get("SDL_VIDEODRIVER"),
-        "stdin_keys + pygame queue" if sdl_env.headless_sdl else "click the game window so it has focus",
+        "stdin_keys + pygame queue"
+        if sdl_env.headless_sdl
+        else "click the game window so it has focus",
     )
 
 # The different colors pydance uses for difficulties in the UI.

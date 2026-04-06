@@ -536,9 +536,7 @@ class OptionScreen(InterfaceWindow):
         self._index = [0]
         ActiveIndicator([5, 106], height=25, width=185).add(self._sprites)
         if self._players == 2:
-            self._lists.append(
-                ListBox(FontTheme.Opts_list, MENU_NAV_TEXT, 25, 9, 176, [453, 246])
-            )
+            self._lists.append(ListBox(FontTheme.Opts_list, MENU_NAV_TEXT, 25, 9, 176, [453, 246]))
             self._index.append(0)
             self._text.append(
                 WrapTextDisplay(
@@ -564,7 +562,9 @@ class OptionScreen(InterfaceWindow):
             )
             self._displayers.append(OptionSelect(names, [220, 440], index_of(val, self.optlist[0])))
 
-        HelpText(O_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [320, 241]).add(self._sprites)
+        HelpText(O_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [320, 241]).add(
+            self._sprites
+        )
         self._sprites.add(self._lists + self._displayers + self._text + self._text2)
 
         for lst in self._lists:

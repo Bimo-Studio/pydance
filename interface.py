@@ -85,9 +85,7 @@ class TextDisplay(pygame.sprite.Sprite):
 
     def _render(self):
         font = FontTheme.font(self._purpose, self._text, self._size[0])
-        img = fontfx.shadow(
-            self._text, font, MENU_NAV_TEXT, color2=MENU_NAV_SHADOW_LIGHT
-        )
+        img = fontfx.shadow(self._text, font, MENU_NAV_TEXT, color2=MENU_NAV_SHADOW_LIGHT)
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.midleft = self._midleft

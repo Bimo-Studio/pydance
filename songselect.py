@@ -269,7 +269,9 @@ class SongSelect(InterfaceWindow):
         ActiveIndicator([405, 259], width=230).add(self._sprites)
         self._banner = BannerDisplay([205, 230])
         self._banner.set_song(self._song)
-        self._sprites.add(HelpText(SS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [206, 20]))
+        self._sprites.add(
+            HelpText(SS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [206, 20])
+        )
 
         self._title = TextDisplay("SongSel_sort_mode", [210, 28], [414, 27])
         self._sprites.add(self._diff_widgets + [self._banner, self._list, self._title])
@@ -438,11 +440,17 @@ class SongSelect(InterfaceWindow):
                     self._diff_names[i] = self._diff_names[pid]
                     self._pref_diff_names[i] = self._diff_names[pid]
 
-            if ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT] or list_changed_by_mouse:
+            if (
+                ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT]
+                or list_changed_by_mouse
+            ):
                 self._preview.preview(self._song)
                 self._banner.set_song(self._song)
 
-            if ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT] or list_changed_by_mouse:
+            if (
+                ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT]
+                or list_changed_by_mouse
+            ):
                 if ev == ui.UP:
                     self._list.set_index(self._index, -1)
                 elif ev == ui.DOWN:
@@ -483,7 +491,10 @@ class SongSelect(InterfaceWindow):
                                 difflen = len(self._song.diff_list)
                                 self._diff_names[pl] = self._song.diff_list[difflen // 2]
 
-            if ev in [ui.UP, ui.DOWN, ui.LEFT, ui.RIGHT, ui.RANDOM, ui.CONFIRM] or list_changed_by_mouse:
+            if (
+                ev in [ui.UP, ui.DOWN, ui.LEFT, ui.RIGHT, ui.RANDOM, ui.CONFIRM]
+                or list_changed_by_mouse
+            ):
                 if not self._song.isfolder:
                     for i, name in enumerate(self._diff_names):
                         rank = records.get(self._song.info["recordkey"], name, self._game)[0]

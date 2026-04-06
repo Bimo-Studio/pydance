@@ -237,7 +237,9 @@ class CourseSelector(InterfaceWindow):
             self._configs.append(dict(player_config))
 
         ActiveIndicator([368, 306], height=32, width=266).add(self._sprites)
-        HelpText(CS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [186, 20]).add(self._sprites)
+        HelpText(CS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [186, 20]).add(
+            self._sprites
+        )
 
         self._list_gfx = ScrollingImage(self._course.image, [15, 80], 390)
         self._coursetitle = TextDisplay("Crs_course_name", [345, 28], [20, 56])
@@ -360,7 +362,10 @@ class CourseSelector(InterfaceWindow):
             self._index %= len(self._courses)
             self._course = self._courses[self._index]
 
-            if ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT] or list_changed_by_mouse:
+            if (
+                ev in [ui.CANCEL, ui.UP, ui.DOWN, ui.RANDOM, ui.CONFIRM, ui.SORT]
+                or list_changed_by_mouse
+            ):
                 if ev == ui.UP:
                     self._list.set_index(self._index, -1)
                 elif ev == ui.DOWN:

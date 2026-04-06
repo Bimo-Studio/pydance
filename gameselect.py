@@ -204,7 +204,9 @@ class MainWindow(InterfaceWindow):
         self._sprites.add([self._title, self._selected, self._description])
         self._indicator = ActiveIndicator([405, 152], width=230)
         self._sprites.add(self._indicator)
-        self._sprites.add(HelpText(GS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [206, 20]))
+        self._sprites.add(
+            HelpText(GS_HELP, MENU_NAV_TEXT, [255, 255, 255], FontTheme.help, [206, 20])
+        )
         self._sprites.add(self._lists)
         # The image displayed on the main part of the screen.
         self._image = FlipImageDisplay(IMAGES.get(_("4 panel")), [200, 200])

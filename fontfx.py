@@ -153,9 +153,7 @@ class TextZoomer:
         else:
             self.tempsurface.fill(tuple(b) + (255,))
         self.tempsurface.blit(zoomsurface, zsrect)
-        text = shadow(
-            self.zoomtext, self.font, self.fore, offset=2, color2=(255, 255, 255)
-        )
+        text = shadow(self.zoomtext, self.font, self.fore, offset=2, color2=(255, 255, 255))
         trect = text.get_rect()
         self.tempsurface.blit(text, [320 - (trect.size[0] // 2), 32 - (trect.size[1] // 2)])
 

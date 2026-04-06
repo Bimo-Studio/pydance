@@ -88,9 +88,11 @@ def _ensure_tty_cbreak() -> None:
 
 
 def _trace_stdin_enabled() -> bool:
-    return os.environ.get("PYDANCE_TRACE_MENU_INPUT", "").lower() in ("1", "true", "yes") or os.environ.get(
-        "PYDANCE_TRACE_STDIN_KEYS", ""
-    ).lower() in ("1", "true", "yes")
+    return os.environ.get("PYDANCE_TRACE_MENU_INPUT", "").lower() in (
+        "1",
+        "true",
+        "yes",
+    ) or os.environ.get("PYDANCE_TRACE_STDIN_KEYS", "").lower() in ("1", "true", "yes")
 
 
 def inject_stdin_as_pygame_events() -> None:

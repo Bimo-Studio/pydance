@@ -122,6 +122,7 @@ class MenuListNavDedupe:
         self._pending = None
         return pid < MAX_PLAYERS
 
+
 # Maximum number of players. Note that old code assumes 2 players in some places.
 MAX_PLAYERS = 4
 
