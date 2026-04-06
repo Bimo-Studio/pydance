@@ -1,0 +1,199 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pydance"
+version = "1.1.0"
+requires-python = ">=3.10"
+readme = "README"
+dependencies = [
+    "pygame>=2",
+    # Pygame (and some tooling) still use pkg_resources; setuptools 82+ removes it.
+    "setuptools>=69,<81",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-cov>=4",
+    "pytest-timeout>=2",
+    "coverage[toml]>=7",
+    "pyflakes>=3",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "types-setuptools",
+    "pycodestyle>=2.12",
+    "pylama>=8.4",
+    "bandit[toml]>=1.7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+# Pylama registers a pytest plugin that imports pkg_resources before conftest; lint uses `make pylama`.
+addopts = "-q --timeout=60 -p no:pylama"
+timeout_method = "thread"
+filterwarnings = [
+    # Pygame still uses pkg_resources until upstream drops it; we pin setuptools<81.
+    "ignore:.*pkg_resources is deprecated as an API.*:UserWarning",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    ".venv/*",
+    "*/.venv/*",
+    "tests/*",
+    "backup_fixes/*",
+    # Root-level tooling and scratch scripts (not the tests/ suite)
+    "check_*.py",
+    "fix_*.py",
+    "debug_*.py",
+    "dump_*.py",
+    "inspect_*.py",
+    "key_test.py",
+    "minimal_test.py",
+    "simple_test.py",
+    "simple_working_test.py",
+    "test_basic.py",
+    "test_game_direct.py",
+    "test_pygame.py",
+    "test_song.py",
+    # Full-screen UI and main entrypoints (manual / integration testing)
+    "ui.py",
+    "interface.py",
+    "songselect.py",
+    "courseselect.py",
+    "gameselect.py",
+    "menudriver.py",
+    "menus.py",
+    "pad.py",
+    "fontfx.py",
+    "pydance.py",
+    "dance.py",
+    "dance2.py",
+    "gradescreen.py",
+    "endless.py",
+    "options.py",
+    "announcer.py",
+    "dance_minimal.py",
+    "run_dance.py",
+    "setup.py",
+    "configure_install.py",
+    # Pygame rendering / sprite layers (covered by playtesting)
+    "arrows.py",
+    "combos.py",
+    "player.py",
+    "lifebars.py",
+    "error.py",
+    "lyrics.py",
+    "scores.py",
+    "courses.py",
+]
+
+[tool.coverage.report]
+# Total line coverage for modules listed under [tool.coverage.run] (omit = excluded).
+# Threshold tracks the measured tree (~48% with current tests); raise as coverage grows.
+fail_under = 47
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [".venv", "backup_fixes"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+# Legacy codebase: star imports from constants/interface/i18n; sys.path before imports in tests.
+ignore = [
+    "E402",  # module-import-not-at-top-of-file
+    "E501",  # line-too-long (prefer 100 cols; many legacy long lines)
+    "F403",  # import-star
+    "F405",  # import-star-usage
+    "UP029",  # unnecessary-builtin-import (from builtins import range — py2-era pattern)
+    "UP031",  # printf-style % formatting (large mechanical refactor)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Standalone legacy script; explicit runtime version check is intentional.
+"configure_install.py" = ["UP036"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.bandit]
+exclude_dirs = [".venv", "backup_fixes"]
+# B101: assert in tests; B311: random for gameplay; B301/B403: pickle for local user data (~/.pydance).
+# B105: false positives on config keys like "secret"; B110: intentional except/pass (i18n, optional icon).
+skips = ["B101", "B311", "B301", "B403", "B105", "B110"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+ignore_missing_imports = true
+exclude = [
+    "^backup_fixes/",
+    "^\\.venv/",
+    "^test_game_direct\\.py$",
+]
+namespace_packages = false
+explicit_package_bases = false
+
+# Flat layout: repo root on path (matches pytest pythonpath).
+mypy_path = "."
+
+# Flat layout: top-level game modules (see also configure_install.py for legacy Makefile).
+[tool.setuptools]
+py-modules = [
+    "announcer",
+    "arrows",
+    "colors",
+    "combos",
+    "config",
+    "constants",
+    "courses",
+    "courseselect",
+    "dance",
+    "dance2",
+    "dance_minimal",
+    "endless",
+    "error",
+    "fileparsers",
+    "fontfx",
+    "fonttheme",
+    "games",
+    "gameselect",
+    "gfxtheme",
+    "grades",
+    "gradescreen",
+    "i18n",
+    "interface",
+    "judge",
+    "lifebars",
+    "listener",
+    "lyrics",
+    "menudriver",
+    "menus",
+    "options",
+    "pad",
+    "player",
+    "pydance",
+    "records",
+    "scores",
+    "songselect",
+    "stats",
+    "stepfilters",
+    "steps",
+    "ui",
+    "util",
+]
