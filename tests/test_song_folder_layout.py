@@ -28,8 +28,8 @@ q 1000
 
 class TestSongFolderLayout(unittest.TestCase):
     def test_infer_mix_from_nested_path(self):
-        from constants import mainconfig
         import fileparsers
+        from constants import mainconfig
 
         old = mainconfig["songdir"]
         tmp = tempfile.mkdtemp()
@@ -51,8 +51,8 @@ class TestSongFolderLayout(unittest.TestCase):
             mainconfig["songdir"] = old
 
     def test_fallback_audio_matches_stem(self):
-        from constants import mainconfig
         import fileparsers
+        from constants import mainconfig
 
         old = mainconfig["songdir"]
         tmp = tempfile.mkdtemp()
@@ -62,9 +62,7 @@ class TestSongFolderLayout(unittest.TestCase):
             os.makedirs(sdir)
             chart = os.path.join(sdir, "onlysong.dance")
             with open(chart, "w", encoding="utf-8") as f:
-                f.write(
-                    MINIMAL_DANCE.replace("filename song.ogg", "filename missing.ogg")
-                )
+                f.write(MINIMAL_DANCE.replace("filename song.ogg", "filename missing.ogg"))
             mp3 = os.path.join(sdir, "onlysong.mp3")
             with open(mp3, "wb") as f:
                 f.write(b"\0" * 16)

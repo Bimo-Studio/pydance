@@ -1,7 +1,6 @@
 """Regression: keyboard plumbing must use a sparse container for pygame 2 / SDL2 key codes."""
 
 import os
-
 import unittest
 
 

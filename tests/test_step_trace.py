@@ -1,6 +1,7 @@
 """step_trace: optional env-gated logging for the step → sprite → draw pipeline."""
 
 import os
+import tempfile
 
 import step_trace
 
@@ -34,4 +35,5 @@ def test_log_steps_loaded_no_crash_when_disabled():
         length = 10.0
         offset = 0.0
 
-    step_trace.log_steps_loaded(_Steps(), "/tmp/fake.dance")
+    fake_path = os.path.join(tempfile.gettempdir(), "pydance_fake_test.dance")
+    step_trace.log_steps_loaded(_Steps(), fake_path)
