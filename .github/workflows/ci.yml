@@ -1,0 +1,52 @@
+# Run on push/PR; keeps pytest + lint green without manual QA.
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package (dev extras)
+        run: pip install -e ".[dev]"
+
+      - name: Run tests (headless pygame)
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
+        run: python -m pytest tests/ -q --cov --cov-config=pyproject.toml
+
+      - name: Lint (unused imports / dead assignments)
+        run: make -f Makefile.general lint
+
+      - name: Ruff (check + format)
+        run: make -f Makefile.general ruff
+
+      - name: Mypy
+        run: make -f Makefile.general mypy
+
+      - name: Pycodestyle
+        run: make -f Makefile.general pycodestyle
+
+      - name: Pylama
+        run: make -f Makefile.general pylama
+
+      - name: Bandit
+        run: make -f Makefile.general bandit
