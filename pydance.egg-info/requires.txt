@@ -1,0 +1,15 @@
+pygame>=2
+
+[dev]
+pytest>=7
+pytest-cov>=4
+pytest-timeout>=2
+coverage[toml]>=7
+pyflakes>=3
+ruff>=0.4
+mypy>=1.8
+types-setuptools
+pycodestyle>=2.12
+pylama>=8.4
+setuptools<81,>=69
+bandit[toml]>=1.7
