@@ -1,4 +1,9 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 # A generic configuration file parser
+
 
 import os
 
@@ -7,66 +12,85 @@ import os
 # if a value is present in the user hash.
 
 # When writing out, only things *not* equal to the master hash (or only
-# in the master hash) are written back out. 
+# in the master hash) are written back out.
 
-class Config(object):
-  # Start a config file, based off a hash - this hash is always a master set
-  def __init__(self, data = None):
-    self.user = {}
-    self.master = {}
-    if data != None: self.update(data, True)
 
-  # Update with a dict object, instead of a file.
-  def update(self, data, master = False):
-    if master: self.master.update(data)
-    else: self.user.update(data)
-        
-  def __getitem__(self, key):
-    if key in self.user: return self.user[key]
-    else: return self.master.get(key)
-  
-  def __setitem__(self, key, value, master = False):
-    if master: self.master[key] = value
-    else: self.user[key] = value
+class Config:
+    # Start a config file, based off a hash - this hash is always a master set
+    def __init__(self, data=None):
+        self.user = {}
+        self.master = {}
+        if data is not None:
+            self.update(data, True)
 
-  def __delitem__(self, key):
-    if key in self.master: del(self.master[key])
-    if key in self.user: del(self.user[key])
+    # Update with a dict object, instead of a file.
+    def update(self, data, master=False):
+        if master:
+            self.master.update(data)
+        else:
+            self.user.update(data)
 
-  def get(self, key, value = None):
-    if key in self.user: return self.user[key]
-    else: return self.master.get(key, value)
+    def __getitem__(self, key):
+        if key in self.user:
+            return self.user[key]
+        else:
+            return self.master.get(key)
 
-  # Update the config data with a 'key value' filename.
-  # If should_exist is true, raise exceptions if the file doesn't exist.
-  # Otherwise, we silently ignore it.
-  def load(self, filename, master = False, should_exist = False):
-    d = self.user
-    if master: d = self.master
+    def __setitem__(self, key, value, master=False):
+        if master:
+            self.master[key] = value
+        else:
+            self.user[key] = value
 
-    if not os.path.isfile(filename) and not should_exist: return
+    def __delitem__(self, key):
+        if key in self.master:
+            del self.master[key]
+        if key in self.user:
+            del self.user[key]
 
-    fi = file(filename, "r")
-    for line in fi:
-      line = line.strip()
-      if not line or line[0] == '#': pass # comment
-      else:
-        key = line[0:line.find(' ')]
-        val = line[line.find(' ') + 1:].strip()
-        # Try to cast the input to a nicer type
-        try: d[key] = int(val)
-        except ValueError:
-          try: d[key] = float(val)
-          except ValueError: d[key] = val
+    def get(self, key, value=None):
+        if key in self.user:
+            return self.user[key]
+        else:
+            return self.master.get(key, value)
 
-    fi.close()
+    # Update the config data with a 'key value' filename.
+    # If should_exist is true, raise exceptions if the file doesn't exist.
+    # Otherwise, we silently ignore it.
+    def load(self, filename, master=False, should_exist=False):
+        d = self.user
+        if master:
+            d = self.master
 
-  # Write the filename back out to disk.
-  def write(self, filename):
-    fi = file(filename, "w")
-    keys = self.user.keys()
-    keys.sort()
-    for key in keys:
-      if key not in self.master or self.master[key] != self.user[key]:
-        fi.write("%s %s\n" % (key, self.user[key]))
-    fi.close()
+        if not os.path.isfile(filename) and not should_exist:
+            return
+
+        logger.debug("loading config file %s (master=%s)", filename, master)
+        fi = open(filename)
+        for line in fi:
+            line = line.strip()
+            if not line or line[0] == "#":
+                pass  # comment
+            else:
+                key = line[0 : line.find(" ")]
+                val = line[line.find(" ") + 1 :].strip()
+                # Try to cast the input to a nicer type
+                try:
+                    d[key] = int(val)
+                except ValueError:
+                    try:
+                        d[key] = float(val)
+                    except ValueError:
+                        d[key] = val
+
+        fi.close()
+
+    # Write the filename back out to disk.
+    def write(self, filename):
+        fi = open(filename, "w")
+        keys = list(self.user.keys())
+        keys.sort()
+        for key in keys:
+            if key not in self.master or self.master[key] != self.user[key]:
+                fi.write(f"{key} {self.user[key]}\n")
+        fi.close()
